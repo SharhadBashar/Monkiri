@@ -1,39 +1,41 @@
+//The header component
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import './HeaderStyle.css'
+import './Style.css'
 
 class Header extends React.Component {
     renderLinks() {
-        if (this.props.auth) {
+        if (this.props.token) {
             return (
-                <div>
+                <div className = "links">
                     <Link to = "/signOut">Sign Out</Link>
-                    <Link to = "/feature">Feature</Link>
+                    <Link to = "/users">Users</Link>
                 </div>
             );
         }
         else {
             return (
-                <div>
+                <div className = "links">
                     <Link to = "/signUp">Sign Up</Link>
                     <Link to = "/signIn">Sign In</Link>
                 </div>
             );
         }
-    }
+    };
+
     render() {
         return (
             <div className = "header">
-                <Link to = "/">Redux Auth</Link>
+                <Link to = "/">App Home Page</Link>
                 {this.renderLinks()}
             </div>
         );
-    }
+    };
 }
 
 function mapStateToProps(state) {
-    return {auth: state.auth.auth};
+    return {token: state.user.token};
 }
 
 export default connect(mapStateToProps)(Header);

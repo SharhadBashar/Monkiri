@@ -1,21 +1,25 @@
+//Checks to make sure that user is logged in
 import React from 'react';
 import {connect} from 'react-redux';
 
 export default (ChildComponent) => {
     class ComposedComponent extends React.Component {
-        loggedIn() {
-            if (!this.props.auth) {
-                this.props.history.push('/');
-            }
-        }
         //Component just rendered
         componentDidMount() {
             this.loggedIn();
         }
+
         //Component just got updated
         componentDidUpdate() {
             this.loggedIn();
-        }    
+        } 
+
+        loggedIn() {
+            if (!this.props.token) {
+                this.props.history.push('/');
+            }
+        }
+
         //need the ...this.props to pass in the actions
         render() {
             return (
@@ -25,7 +29,7 @@ export default (ChildComponent) => {
     }
 
     function mapStateToProps(state) {
-        return {auth: state.auth.auth};
+        return {token: state.user.token};
     }
 
     return connect(mapStateToProps)(ComposedComponent);

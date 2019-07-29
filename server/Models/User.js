@@ -1,15 +1,17 @@
+//User model
 const bcrypt = require('bcrypt-nodejs')
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 //Define our model
 const userSchema = new Schema({
-    email: {
+    username: {
         type: String,
         unique: true,
         lowercase: true
     },
-    password: String
+    password: String,
+    language: String
 });
 
 //on save hook, encrypt password. run before saving model

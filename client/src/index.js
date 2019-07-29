@@ -10,11 +10,15 @@ import Welcome from './Components/Welcome';
 import SignUp from './Components/Auth/SignUp';
 import SignOut from './Components/Auth/SignOut';
 import SignIn from './Components/Auth/SignIn';
-import Feature from './Components/Feature'
+import Users from './Components/Users'
 
 const store = createStore(
     reducers,
-    {auth: {auth: localStorage.getItem('token')}},
+    {user: {
+        username: localStorage.getItem('username'),
+        language: localStorage.getItem('language'),
+        token: localStorage.getItem('token')
+    }},
     applyMiddleware(reduxThunk)
 )
 
@@ -26,10 +30,9 @@ ReactDOM.render(
                 <Route path = "/signUp" component = {SignUp} />
                 <Route path = "/signOut" component = {SignOut} />
                 <Route path = "/signIn" component = {SignIn} />
-                <Route path = "/feature" component = {Feature} />
+                <Route path = "/users" component = {Users} />
             </App>
         </BrowserRouter>
-    </Provider>
-    , 
+    </Provider>, 
     document.getElementById('root')
 );

@@ -1,46 +1,79 @@
+//The page that allows users to sign up
 import React from 'react';
 import {reduxForm, Field} from 'redux-form';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {signUp} from '../../Actions';
+import Button from './Button';
 
 class SignUp extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            username: '',
+            password: ''
+        };
+    };
+
+    componentDidMount() {
+        if (this.props.token) {
+            this.props.history.push('/users');
+        }
+    };
+
     onSubmit = (formProps) => {
         this.props.signUp(formProps, () => {
-            this.props.history.push('/feature');
+            this.props.history.push('/users');
         })
     };
+
     render() {
         const {handleSubmit} = this.props;
         return (
             <form onSubmit = {handleSubmit(this.onSubmit)}>
                 <fieldset>
-                    <label>Email</label>
+                    <label>Username: </label>
                     <Field 
-                        name = "email"
+                        name = "username"
                         type = "text"
                         component = "input"
                         autoComplete = "none"
+                        placeholder = "Username"
+                        value = {this.state.username}
+                        onChange = {(event) => {
+                            this.setState({username: event.target.value});
+                        }}
                     />
                 </fieldset>
                 <fieldset>
-                    <label>Password</label>
+                    <label>Password: </label>
                     <Field 
                         name = "password"
                         type = "password"
                         component = "input"
                         autoComplete = "none"
+                        placeholder = "Password"
+                        value = {this.state.password}
+                        onChange = {(event) => {
+                            this.setState({password: event.target.value});
+                        }}
                     />
                 </fieldset>
-                <div>{this.props.error}</div>
-                <button>Sign Up</button>
+                <div className = "error">{this.props.error}</div>
+                <Button text = "Sign Up" state = {this.state}/>
             </form>
         );
-    }
+    };
 }
 
 function mapStateToProps(state) {
-    return {error: state.auth.error};
+    if (state.user.error === 'Wrong credentials') {
+        state.user.error = '';
+    }
+    return {
+        token: state.user.token,
+        error: state.user.error
+    };
 }
 
 export default compose(

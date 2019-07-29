@@ -1,3 +1,4 @@
+//Where users are authenticated
 const jwt = require('jwt-simple');
 const User = require('../Models/User'); //This is a class of user. It represents all the users, not just one user
 const config = require('../config');
@@ -11,28 +12,32 @@ function token(user) {
 }
 
 exports.signUp = function(req, res, next) {
-    //See if user with a given email exists
-    const email = req.body.email;
+    //See if user with a given username exists
+    const username = req.body.username;
     const password = req.body.password;
 
-    if(!email || !password) {
-        return res.status(422).send({error: 'Must provide email and password'});
+    if(!username || !password) {
+        return res.status(422).send({error: 'Must provide Username and Password'});
     }
-    //if user with a given email exists, throw an error
-    User.findOne({email: email})
+    //if user with a given username exists, throw an error
+    User.findOne({username: username})
     .then(function(existingUser) {
         if (existingUser) {
-            return res.status(422).send({error: 'Email or Username is in use'});
+            return res.status(422).send({error: 'Username is taken. Please pick another username'});
         }
         //else, create a new user
         const user = new User({
-            email: email,
-            password: password
+            username: username,
+            password: password,
+            language: null
         });
         user.save()
         .then(function() {
             //respond to request
-            res.json({token: token(user)});
+            res.json({
+                username: username,
+                token: token(user)
+            });
         }, function(err) {
             return next(err);
         });
@@ -43,5 +48,27 @@ exports.signUp = function(req, res, next) {
 
 exports.signIn = function(req, res, next) {
     //User already authenticated. just needs to get a token
-    res.send({token: token(req.user)});
+    res.send({
+        username: req.user.username,
+        language: req.user.language,
+        token: token(req.user)
+    });
+}
+
+exports.save = function(req, res, next) {
+    const username = req.body.username;
+    const language = req.body.language;
+    if(!username || !language) {
+        return res.status(422).send({error: 'Must provide Username and Language'});
+    }
+
+    User.findOneAndUpdate({username: username}, {language: language}).exec()
+    .then(function(user) {
+        res.send({
+            username: user.username,
+            language: user.language,
+        });
+    }, function(err) {
+        return next(err);
+    }); 
 }

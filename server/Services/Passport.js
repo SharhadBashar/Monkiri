@@ -1,3 +1,4 @@
+//Passport to authenticate users
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
@@ -6,10 +7,10 @@ const User = require('../Models/User');
 const config = require('../config');
 
 //Create local strategy
-const localOptions = {usernameField: 'email'};
-const localLogin = new LocalStrategy(localOptions, function(email, password, done, username) {
-    //verify username or email and call done with user
-    User.findOne({$or: [{email: email}, {username: username}]}, function(err, user) {
+const localOptions = {usernameField: 'username'};
+const localLogin = new LocalStrategy(localOptions, function(username, password, done) {
+    //verify username and call done with user
+    User.findOne({username: username}, function(err, user) {
         if (err) {return done(err);}
         if (!user) {
             return done(null, false);
